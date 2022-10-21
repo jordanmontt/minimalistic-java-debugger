@@ -17,10 +17,10 @@ import com.sun.jdi.request.StepRequest;
 
 public class EventReceiver {
 	
-	private StepRequest sr;
+	private StepRequest stepRequest;
 
 	public EventReceiver() {
-		sr = null;
+		stepRequest = null;
 	}
 	
 	//EventHandlers
@@ -43,23 +43,28 @@ public class EventReceiver {
 	}
 	
 	public void BreakpointEventHandler(Event event, VirtualMachine vm) throws IOException {
-		if(inputCommand()) {
-			sr = enableStepRequest((BreakpointEvent) event, vm);
+		String userInput = getUserInput();
+		if (doesInputContainsStep(userInput)) {
+			stepRequest = enableStepRequest((BreakpointEvent) event, vm);
 		}
 	}
 	
 	public void StepEventHandler() throws IOException {
-		if(!inputCommand()) {
-			sr.disable();
+		String userInput = getUserInput();
+		if (!doesInputContainsStep(userInput)) {
+			stepRequest.disable();
 		}
 	}
 	
 	//Methods
-	private boolean inputCommand() throws IOException{
-    	BufferedReader reader = new BufferedReader(
-                new InputStreamReader(System.in));
-        return reader.readLine().contains("step");
-    }
+	private String getUserInput() throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		return reader.readLine();
+	}
+
+	private boolean doesInputContainsStep(String userInput) {
+		return userInput.contains("step");
+	}
 	
 	private StepRequest enableStepRequest(BreakpointEvent event, VirtualMachine vm) {
     	StepRequest stepRequest = vm.eventRequestManager().
