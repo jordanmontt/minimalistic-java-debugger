@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Map;
-import java.util.Scanner;
 
 public class ScriptableDebugger {
 
@@ -52,7 +51,7 @@ public class ScriptableDebugger {
 	}
 
 	public void startDebugger()
-			throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException {
+			throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException, IncompatibleThreadStateException {
 		EventSet eventSet = null;
 		StepRequest stepRequest = null;
 
@@ -70,21 +69,39 @@ public class ScriptableDebugger {
 					writer.flush();
 					return;
 				}
+
 				if (event instanceof ClassPrepareEvent) {
 					setBreakPoint(debugClass.getName(), 6);
+					setBreakPoint(debugClass.getName(), 9);
 				}
 
 				if (event instanceof BreakpointEvent) {
 					String userInput = getUserInput();
-					if (doesInputContainsStep(userInput)) {
-						stepRequest = enableStepRequest((BreakpointEvent) event);
+					if (userInput.equals("step")) {
+						stepRequest = enableStepIntoRequest((LocatableEvent) event);
+					}
+					if (userInput.equals("step-over")) {
+						stepRequest = enableStepOverRequest((LocatableEvent) event);
 					}
 				}
 
 				if (event instanceof StepEvent) {
 					String userInput = getUserInput();
-					if (!doesInputContainsStep(userInput)) {
+					System.out.println("Entered StepEvent");
+					if (userInput.equals("continue")) {
+						System.out.println("Entered exit");
 						stepRequest.disable();
+					}
+					if (userInput.equals("step")) {
+						stepRequest.disable();
+						stepRequest = enableStepIntoRequest((LocatableEvent) event);
+					}
+					if (userInput.equals("step-over")) {
+						stepRequest.disable();
+						stepRequest = enableStepOverRequest((LocatableEvent) event);
+					}
+					if(userInput.equals("frame")) {
+						System.out.println(((StepEvent) event).thread().frame(0));
 					}
 				}
 
@@ -99,16 +116,22 @@ public class ScriptableDebugger {
 		return reader.readLine();
 	}
 
-	private boolean doesInputContainsStep(String userInput) {
-		return userInput.contains("step");
-	}
-
-	private StepRequest enableStepRequest(BreakpointEvent event) {
+	private StepRequest enableStepIntoRequest(LocatableEvent event) {
+		System.out.println("Entered step");
 		StepRequest stepRequest = vm.eventRequestManager()
-				.createStepRequest(event.thread(), StepRequest.STEP_MIN, StepRequest.STEP_OVER);
+				.createStepRequest(event.thread(), StepRequest.STEP_MIN, StepRequest.STEP_INTO);
 		stepRequest.enable();
 		return stepRequest;
 	}
+
+	private StepRequest enableStepOverRequest(LocatableEvent event) {
+		System.out.println("Entered step-over");
+		StepRequest stepRequest = vm.eventRequestManager()
+				.createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
+		stepRequest.enable();
+		return stepRequest;
+	}
+
 
 	private void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
 		for (ReferenceType targetClass : vm.allClasses()) {
