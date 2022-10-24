@@ -8,10 +8,15 @@ import com.sun.jdi.connect.VMStartException;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
+import command.InputCommand;
+import command.InputReceiver;
+import command.StepCommand;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.HashMap;
 import java.util.Map;
 
 public class ScriptableDebugger {
@@ -54,7 +59,14 @@ public class ScriptableDebugger {
 			throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException, IncompatibleThreadStateException {
 		EventSet eventSet = null;
 		StepRequest stepRequest = null;
-
+		
+		InputReceiver ir = new InputReceiver(vm, stepRequest);
+		HashMap<String, InputCommand> hashmap = new HashMap<String, InputCommand>();
+		hashmap.put("step", new StepCommand(ir));
+		//hashmap.put("step-over", new StepOverCommand(ir));
+		//hashmap.put("continue", new ContinueCommand(ir));
+		//hashmap.put("frame", new FrameCommand(ir));
+		
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {
 				if (event instanceof VMDisconnectEvent) {
@@ -77,9 +89,9 @@ public class ScriptableDebugger {
 
 				if (event instanceof BreakpointEvent) {
 					String userInput = getUserInput();
-					if (userInput.equals("step")) {
-						stepRequest = enableStepIntoRequest((LocatableEvent) event);
-					}
+					ir.setEvent((BreakpointEvent)event);
+					hashmap.get(userInput).execute();
+					
 					if (userInput.equals("step-over")) {
 						stepRequest = enableStepOverRequest((LocatableEvent) event);
 					}
@@ -87,14 +99,10 @@ public class ScriptableDebugger {
 
 				if (event instanceof StepEvent) {
 					String userInput = getUserInput();
-					System.out.println("Entered StepEvent");
+					ir.setEvent((StepEvent)event);
+					hashmap.get(userInput).execute();
 					if (userInput.equals("continue")) {
-						System.out.println("Entered exit");
 						stepRequest.disable();
-					}
-					if (userInput.equals("step")) {
-						stepRequest.disable();
-						stepRequest = enableStepIntoRequest((LocatableEvent) event);
 					}
 					if (userInput.equals("step-over")) {
 						stepRequest.disable();
@@ -116,13 +124,7 @@ public class ScriptableDebugger {
 		return reader.readLine();
 	}
 
-	private StepRequest enableStepIntoRequest(LocatableEvent event) {
-		System.out.println("Entered step");
-		StepRequest stepRequest = vm.eventRequestManager()
-				.createStepRequest(event.thread(), StepRequest.STEP_MIN, StepRequest.STEP_INTO);
-		stepRequest.enable();
-		return stepRequest;
-	}
+	
 
 	private StepRequest enableStepOverRequest(LocatableEvent event) {
 		System.out.println("Entered step-over");

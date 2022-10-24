@@ -1,5 +1,6 @@
 package command;
 
-public interface EventCommand {
+public interface InputCommand {
+	
 	public void execute(); 
 }
