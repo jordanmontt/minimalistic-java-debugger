@@ -68,6 +68,7 @@ public class ScriptableDebugger {
 		hashmap.put("stack", new StackCommand(ir));
 		hashmap.put("receiver", new ReceiverCommand(ir));
 		hashmap.put("sender", new SenderCommand(ir));
+		hashmap.put("receiver-variables", new ReceiverVariablesCommand(ir));
 		hashmap.put("method", new MethodCommand(ir));
 		hashmap.put("arguments", new ArgumentsCommand(ir));
 
