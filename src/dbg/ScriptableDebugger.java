@@ -71,6 +71,7 @@ public class ScriptableDebugger {
 		hashmap.put("receiver-variables", new ReceiverVariablesCommand(ir));
 		hashmap.put("method", new MethodCommand(ir));
 		hashmap.put("arguments", new ArgumentsCommand(ir));
+		hashmap.put("print-var", new PrintVarCommand(ir));
 
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {

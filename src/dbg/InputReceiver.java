@@ -1,5 +1,8 @@
 package dbg;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
 
@@ -147,6 +150,29 @@ public class InputReceiver {
         }
         this.event.thread().resume();
     }
+    
+    public void printVarHandler() {
+    	System.out.println("Enter the name of the variable : ");
+    	try {
+    		String userInput = getUserInput();
+			this.event.thread().suspend();
+			this.frame = this.event.thread().frame(0);
+			Value val = this.frame.getValue(this.frame.visibleVariableByName(userInput));
+			System.out.println(val);
+			this.event.thread().resume();
+		}catch(IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}catch(AbsentInformationException e) {
+			e.printStackTrace();
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private String getUserInput() throws IOException {
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+		return reader.readLine();
+	}
 
     public void getCurrentExecutedMethodHandler() {
         this.event.thread().suspend();
