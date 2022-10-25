@@ -1,5 +1,6 @@
 package dbg;
 
+import java.util.List;
 import java.util.Map;
 
 import com.sun.jdi.*;
@@ -14,6 +15,7 @@ public class InputReceiver {
     private StepRequest stepRequest;
     private LocatableEvent event;
     private StackFrame frame;
+    private List<StackFrame> stack;
     private Map<LocalVariable, Value> temporaries;
 
     public InputReceiver(VirtualMachine vm, StepRequest stepRequest) {
@@ -63,19 +65,29 @@ public class InputReceiver {
             e.printStackTrace();
         }
     }
-
+    
     public void temporariesHandler() {
-        try {
+		try {
+			this.event.thread().suspend();
+			this.frame = this.event.thread().frame(0);
+			this.temporaries = this.frame.getValues(this.frame.visibleVariables());
+			for( LocalVariable v : this.frame.visibleVariables() ) {
+				System.out.println(v.name() + " -> " + this.temporaries.get(v));
+			}
+			this.event.thread().resume();
+		}catch(IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}catch(AbsentInformationException e) {
+			e.printStackTrace();
+		}
+	}
+    
+    public void stackHandler() {
+    	try {
             this.event.thread().suspend();
-            this.frame = this.event.thread().frame(0);
-            this.temporaries = this.frame.getValues(this.frame.visibleVariables());
-            for (LocalVariable v : this.frame.visibleVariables()) {
-                System.out.println(v.name() + " -> " + this.temporaries.get(v));
-            }
+            this.stack = this.event.thread().frames();
             this.event.thread().resume();
         } catch (IncompatibleThreadStateException e) {
-            e.printStackTrace();
-        } catch (AbsentInformationException e) {
             e.printStackTrace();
         }
     }

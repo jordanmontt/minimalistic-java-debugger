@@ -65,8 +65,9 @@ public class ScriptableDebugger {
 		hashmap.put("continue", new ContinueCommand(ir));
 		hashmap.put("frame", new FrameCommand(ir));
 		hashmap.put("temporaries", new TemporariesCommand(ir));
+		hashmap.put("stack", new StackCommand(ir));
 		hashmap.put("receiver", new ReceiverCommand(ir));
-		
+
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {
 				if (event instanceof VMDisconnectEvent) {
@@ -83,9 +84,8 @@ public class ScriptableDebugger {
 				}
 				
 				if (event instanceof ClassPrepareEvent) {
-					// setBreakPoint(debugClass.getName(), 6);
-					// setBreakPoint(debugClass.getName(), 9);
-					setBreakPoint(debugClass.getName(), 19);
+					setBreakPoint(debugClass.getName(), 6);
+					setBreakPoint(debugClass.getName(), 9);
 				}
 
 				if (event instanceof BreakpointEvent) {
