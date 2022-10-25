@@ -63,22 +63,22 @@ public class InputReceiver {
             e.printStackTrace();
         }
     }
-    
+
     public void temporariesHandler() {
-		try {
-			this.event.thread().suspend();
-			this.frame = this.event.thread().frame(0);
-			this.temporaries = this.frame.getValues(this.frame.visibleVariables());
-			for( LocalVariable v : this.frame.visibleVariables() ) {
-				System.out.println(v.name() + " -> " + this.temporaries.get(v));
-			}
-			this.event.thread().resume();
-		}catch(IncompatibleThreadStateException e) {
-			e.printStackTrace();
-		}catch(AbsentInformationException e) {
-			e.printStackTrace();
-		}
-	}
+        try {
+            this.event.thread().suspend();
+            this.frame = this.event.thread().frame(0);
+            this.temporaries = this.frame.getValues(this.frame.visibleVariables());
+            for (LocalVariable v : this.frame.visibleVariables()) {
+                System.out.println(v.name() + " -> " + this.temporaries.get(v));
+            }
+            this.event.thread().resume();
+        } catch (IncompatibleThreadStateException e) {
+            e.printStackTrace();
+        } catch (AbsentInformationException e) {
+            e.printStackTrace();
+        }
+    }
 
     private StepRequest enableStepIntoRequest(LocatableEvent event) {
         StepRequest stepRequest = vm.eventRequestManager()
@@ -92,6 +92,17 @@ public class InputReceiver {
                 .createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
         stepRequest.enable();
         return stepRequest;
+    }
+
+    public void getReceiverHandler() {
+        this.event.thread().suspend();
+        try {
+            System.out.println(this.event.thread().currentContendedMonitor());
+
+        } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
+        this.event.thread().resume();
     }
 
 }
