@@ -67,6 +67,7 @@ public class ScriptableDebugger {
 		hashmap.put("temporaries", new TemporariesCommand(ir));
 		hashmap.put("stack", new StackCommand(ir));
 		hashmap.put("receiver", new ReceiverCommand(ir));
+		hashmap.put("sender", new ReceiverCommand(ir));
 
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {

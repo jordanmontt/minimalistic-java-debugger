@@ -109,7 +109,18 @@ public class InputReceiver {
     public void getReceiverHandler() {
         this.event.thread().suspend();
         try {
-            System.out.println(this.event.thread().currentContendedMonitor());
+            System.out.println(this.event.thread().frame(0).thisObject());
+
+        } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
+        this.event.thread().resume();
+    }
+
+    public void getSenderHandler() {
+        this.event.thread().suspend();
+        try {
+            System.out.println(this.event.thread().frame(1).thisObject());
 
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
