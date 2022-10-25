@@ -2,16 +2,18 @@ package command;
 
 import dbg.InputReceiver;
 
-public class StepCommand implements InputCommand{
+public class StepOverCommand implements InputCommand {
 
 	InputReceiver ir;
 	
-	public StepCommand(InputReceiver ir) {
+	public StepOverCommand(InputReceiver ir) {
 		this.ir = ir;
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.stepHandler();
+		this.ir.stepOverHandler();
+
 	}
+
 }

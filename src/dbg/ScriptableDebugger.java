@@ -8,9 +8,11 @@ import com.sun.jdi.connect.VMStartException;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
+import command.ContinueCommand;
+import command.FrameCommand;
 import command.InputCommand;
-import command.InputReceiver;
 import command.StepCommand;
+import command.StepOverCommand;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -63,9 +65,9 @@ public class ScriptableDebugger {
 		InputReceiver ir = new InputReceiver(vm, stepRequest);
 		HashMap<String, InputCommand> hashmap = new HashMap<String, InputCommand>();
 		hashmap.put("step", new StepCommand(ir));
-		//hashmap.put("step-over", new StepOverCommand(ir));
-		//hashmap.put("continue", new ContinueCommand(ir));
-		//hashmap.put("frame", new FrameCommand(ir));
+		hashmap.put("step-over", new StepOverCommand(ir));
+		hashmap.put("continue", new ContinueCommand(ir));
+		hashmap.put("frame", new FrameCommand(ir));
 		
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {
@@ -81,7 +83,7 @@ public class ScriptableDebugger {
 					writer.flush();
 					return;
 				}
-
+				
 				if (event instanceof ClassPrepareEvent) {
 					setBreakPoint(debugClass.getName(), 6);
 					setBreakPoint(debugClass.getName(), 9);
@@ -91,26 +93,12 @@ public class ScriptableDebugger {
 					String userInput = getUserInput();
 					ir.setEvent((BreakpointEvent)event);
 					hashmap.get(userInput).execute();
-					
-					if (userInput.equals("step-over")) {
-						stepRequest = enableStepOverRequest((LocatableEvent) event);
-					}
 				}
 
 				if (event instanceof StepEvent) {
 					String userInput = getUserInput();
 					ir.setEvent((StepEvent)event);
 					hashmap.get(userInput).execute();
-					if (userInput.equals("continue")) {
-						stepRequest.disable();
-					}
-					if (userInput.equals("step-over")) {
-						stepRequest.disable();
-						stepRequest = enableStepOverRequest((LocatableEvent) event);
-					}
-					if(userInput.equals("frame")) {
-						System.out.println(((StepEvent) event).thread().frame(0));
-					}
 				}
 
 				System.out.println(event.toString());
@@ -124,17 +112,6 @@ public class ScriptableDebugger {
 		return reader.readLine();
 	}
 
-	
-
-	private StepRequest enableStepOverRequest(LocatableEvent event) {
-		System.out.println("Entered step-over");
-		StepRequest stepRequest = vm.eventRequestManager()
-				.createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
-		stepRequest.enable();
-		return stepRequest;
-	}
-
-
 	private void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
 		for (ReferenceType targetClass : vm.allClasses()) {
 			if (targetClass.name().equals(className)) {
@@ -143,7 +120,6 @@ public class ScriptableDebugger {
 				bpReq.enable();
 			}
 		}
-
 	}
 
 	public void enableClassPrepareRequest(VirtualMachine vm) {
