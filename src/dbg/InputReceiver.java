@@ -15,8 +15,12 @@ public class InputReceiver {
     private StepRequest stepRequest;
     private LocatableEvent event;
     private StackFrame frame;
-    private List<StackFrame> stack;
     private Map<LocalVariable, Value> temporaries;
+    private List<StackFrame> stack;
+    private ObjectReference receiver;
+    private ObjectReference sender;
+    private Map<Field, Value> receiver_variables;
+    
 
     public InputReceiver(VirtualMachine vm, StepRequest stepRequest) {
         this.vm = vm;
@@ -109,7 +113,8 @@ public class InputReceiver {
     public void getReceiverHandler() {
         this.event.thread().suspend();
         try {
-            System.out.println(this.event.thread().frame(0).thisObject());
+        	this.receiver = this.event.thread().frame(0).thisObject();
+            System.out.println(this.receiver);
 
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
@@ -120,7 +125,21 @@ public class InputReceiver {
     public void getSenderHandler() {
         this.event.thread().suspend();
         try {
-            System.out.println(this.event.thread().frame(1).thisObject());
+        	this.sender = this.event.thread().frame(1).thisObject();
+            System.out.println(this.sender);
+
+        } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
+        this.event.thread().resume();
+    }
+    
+    public void receiverVariablesHandler() {
+    	this.event.thread().suspend();
+    	try {
+    		this.receiver = this.event.thread().frame(0).thisObject();
+        	this.receiver_variables = this.receiver.getValues(this.receiver.referenceType().allFields());
+        	System.out.println(this.receiver_variables);
 
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);

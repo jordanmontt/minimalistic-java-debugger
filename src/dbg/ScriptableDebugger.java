@@ -68,7 +68,8 @@ public class ScriptableDebugger {
 		hashmap.put("stack", new StackCommand(ir));
 		hashmap.put("receiver", new ReceiverCommand(ir));
 		hashmap.put("sender", new ReceiverCommand(ir));
-
+		hashmap.put("receiver-variables", new ReceiverVariablesCommand(ir));
+		
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {
 				if (event instanceof VMDisconnectEvent) {
