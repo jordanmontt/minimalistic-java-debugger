@@ -69,6 +69,7 @@ public class ScriptableDebugger {
 		hashmap.put("receiver", new ReceiverCommand(ir));
 		hashmap.put("sender", new SenderCommand(ir));
 		hashmap.put("method", new MethodCommand(ir));
+		hashmap.put("arguments", new ArgumentsCommand(ir));
 
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {

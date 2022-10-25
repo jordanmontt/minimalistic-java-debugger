@@ -18,6 +18,7 @@ public class InputReceiver {
     private List<StackFrame> stack;
     private Map<LocalVariable, Value> temporaries;
     private Method executedMethod;
+    private List<LocalVariable> executedMethodArguments;
 
     public InputReceiver(VirtualMachine vm, StepRequest stepRequest) {
         this.vm = vm;
@@ -135,6 +136,20 @@ public class InputReceiver {
             this.executedMethod = this.event.thread().frame(0).location().method();
             System.out.println(this.executedMethod.name());
         } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
+        this.event.thread().resume();
+    }
+
+    public void getMethodArguments() {
+        this.getCurrentExecutedMethodHandler();
+        this.event.thread().suspend();
+        try {
+           this.executedMethodArguments = this.executedMethod.arguments();
+           for (LocalVariable localVar : this.executedMethodArguments) {
+               System.out.println(localVar);
+           }
+        } catch (AbsentInformationException e) {
             throw new RuntimeException(e);
         }
         this.event.thread().resume();
