@@ -14,6 +14,7 @@ public class InputReceiver {
     private StepRequest stepRequest;
     private LocatableEvent event;
     private StackFrame frame;
+    private Map<LocalVariable, Value> temporaries;
 
     public InputReceiver(VirtualMachine vm, StepRequest stepRequest) {
         this.vm = vm;
@@ -65,11 +66,13 @@ public class InputReceiver {
     
     public void temporariesHandler() {
 		try {
+			this.event.thread().suspend();
 			this.frame = this.event.thread().frame(0);
-			Map<LocalVariable, Value> values = this.frame.getValues(this.frame.visibleVariables());
+			this.temporaries = this.frame.getValues(this.frame.visibleVariables());
 			for( LocalVariable v : this.frame.visibleVariables() ) {
-				
+				System.out.println(v.name() + " -> " + this.temporaries.get(v));
 			}
+			this.event.thread().resume();
 		}catch(IncompatibleThreadStateException e) {
 			e.printStackTrace();
 		}catch(AbsentInformationException e) {
@@ -90,6 +93,5 @@ public class InputReceiver {
         stepRequest.enable();
         return stepRequest;
     }
->>>>>>> 10d042f839351f2bb427c7fb0c23522b1dbe1086
 
 }
