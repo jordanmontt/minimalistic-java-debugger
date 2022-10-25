@@ -1,12 +1,12 @@
 package command;
 
-import dbg.InputReceiver;
+import dbg.VMHandler;
 
 public class StepCommand implements InputCommand{
 
-	InputReceiver ir;
+	VMHandler ir;
 	
-	public StepCommand(InputReceiver ir) {
+	public StepCommand(VMHandler ir) {
 		this.ir = ir;
 	}
 	

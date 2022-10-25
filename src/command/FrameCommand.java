@@ -1,18 +1,23 @@
 package command;
 
-import dbg.InputReceiver;
+import com.sun.jdi.IncompatibleThreadStateException;
+import dbg.VMHandler;
 
 public class FrameCommand implements InputCommand {
 
-	InputReceiver ir;
+	VMHandler ir;
 	
-	public FrameCommand(InputReceiver ir) {
+	public FrameCommand(VMHandler ir) {
 		this.ir = ir; 
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.frameHandler();
+		try {
+			this.ir.handleFrame();
+		} catch (IncompatibleThreadStateException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 

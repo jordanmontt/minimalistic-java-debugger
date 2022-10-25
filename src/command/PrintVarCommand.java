@@ -1,19 +1,26 @@
 package command;
 
-import dbg.InputReceiver;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.IncompatibleThreadStateException;
+import dbg.VMHandler;
+
+import java.io.IOException;
 
 public class PrintVarCommand implements InputCommand {
 
-	InputReceiver ir;
+	VMHandler ir;
 	
-	public PrintVarCommand(InputReceiver ir) {
+	public PrintVarCommand(VMHandler ir) {
 		this.ir = ir;
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.printVarHandler();
-
+		try {
+			this.ir.printVarHandler();
+		} catch (IOException | AbsentInformationException | IncompatibleThreadStateException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

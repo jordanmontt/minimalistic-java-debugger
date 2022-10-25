@@ -1,19 +1,24 @@
 package command;
 
-import dbg.InputReceiver;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.IncompatibleThreadStateException;
+import dbg.VMHandler;
 
 public class TemporariesCommand implements InputCommand {
 
-	InputReceiver ir;
+	VMHandler ir;
 	
-	public TemporariesCommand(InputReceiver ir) {
+	public TemporariesCommand(VMHandler ir) {
 		this.ir = ir;
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.temporariesHandler();
-
+		try {
+			this.ir.handleGetTemporaries();
+		} catch (IncompatibleThreadStateException | AbsentInformationException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

@@ -1,12 +1,12 @@
 package command;
 
-import dbg.InputReceiver;
+import dbg.VMHandler;
 
 public class ContinueCommand implements InputCommand {
 
-	InputReceiver ir;
+	VMHandler ir;
 	
-	public ContinueCommand(InputReceiver ir) {
+	public ContinueCommand(VMHandler ir) {
 		this.ir = ir; 
 	}
 	

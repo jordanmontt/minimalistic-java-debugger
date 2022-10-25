@@ -1,18 +1,23 @@
 package command;
 
-import dbg.InputReceiver;
+import com.sun.jdi.IncompatibleThreadStateException;
+import dbg.VMHandler;
 
 public class StackCommand implements InputCommand {
 
-	InputReceiver ir;
+	VMHandler ir;
 	
-	public StackCommand(InputReceiver ir) {
+	public StackCommand(VMHandler ir) {
 		this.ir = ir;
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.stackHandler();
+		try {
+			this.ir.handleGetStack();
+		} catch (IncompatibleThreadStateException e) {
+			throw new RuntimeException(e);
+		}
 
 	}
 

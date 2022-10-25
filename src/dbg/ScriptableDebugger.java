@@ -56,9 +56,8 @@ public class ScriptableDebugger {
 	public void startDebugger()
 			throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException, IncompatibleThreadStateException {
 		EventSet eventSet = null;
-		StepRequest stepRequest = null;
 		
-		InputReceiver ir = new InputReceiver(vm, stepRequest);
+		VMHandler ir = new VMHandler(vm);
 		HashMap<String, InputCommand> hashmap = new HashMap<String, InputCommand>();
 		hashmap.put("step", new StepCommand(ir));
 		hashmap.put("step-over", new StepOverCommand(ir));

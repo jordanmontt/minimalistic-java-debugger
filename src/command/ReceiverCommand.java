@@ -1,19 +1,23 @@
 package command;
 
 import com.sun.jdi.IncompatibleThreadStateException;
-import dbg.InputReceiver;
+import dbg.VMHandler;
 
 public class ReceiverCommand implements InputCommand {
 
-    InputReceiver ir;
+    VMHandler ir;
 
-    public ReceiverCommand(InputReceiver ir) {
+    public ReceiverCommand(VMHandler ir) {
         this.ir = ir;
     }
 
     @Override
     public void execute() {
-        this.ir.getReceiverHandler();
+        try {
+            this.ir.handleGetReceiver();
+        } catch (IncompatibleThreadStateException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 }
