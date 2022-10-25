@@ -65,6 +65,7 @@ public class ScriptableDebugger {
 		hashmap.put("continue", new ContinueCommand(ir));
 		hashmap.put("frame", new FrameCommand(ir));
 		hashmap.put("temporaries", new TemporariesCommand(ir));
+		hashmap.put("stack", new StackCommand(ir));
 		
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {

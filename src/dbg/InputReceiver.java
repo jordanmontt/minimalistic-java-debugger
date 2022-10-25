@@ -1,5 +1,6 @@
 package dbg;
 
+import java.util.List;
 import java.util.Map;
 
 import com.sun.jdi.*;
@@ -14,6 +15,7 @@ public class InputReceiver {
     private StepRequest stepRequest;
     private LocatableEvent event;
     private StackFrame frame;
+    private List<StackFrame> stack;
     private Map<LocalVariable, Value> temporaries;
 
     public InputReceiver(VirtualMachine vm, StepRequest stepRequest) {
@@ -79,6 +81,16 @@ public class InputReceiver {
 			e.printStackTrace();
 		}
 	}
+    
+    public void stackHandler() {
+    	try {
+            this.event.thread().suspend();
+            this.stack = this.event.thread().frames();
+            this.event.thread().resume();
+        } catch (IncompatibleThreadStateException e) {
+            e.printStackTrace();
+        }
+    }
 
     private StepRequest enableStepIntoRequest(LocatableEvent event) {
         StepRequest stepRequest = vm.eventRequestManager()
