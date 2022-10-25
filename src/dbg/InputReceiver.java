@@ -1,5 +1,7 @@
 package dbg;
 
+import java.util.Map;
+
 import com.sun.jdi.*;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.event.StepEvent;
@@ -55,6 +57,21 @@ public class InputReceiver {
 			e.printStackTrace();
 		}
 	}
+	
+	public void temporariesHandler() {
+		try {
+			this.frame = this.event.thread().frame(0);
+			Map<LocalVariable, Value> values = this.frame.getValues(this.frame.visibleVariables());
+			for( LocalVariable v : this.frame.visibleVariables() ) {
+				
+			}
+		}catch(IncompatibleThreadStateException e) {
+			e.printStackTrace();
+		}catch(AbsentInformationException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 	private StepRequest enableStepIntoRequest(LocatableEvent event) {
 		StepRequest stepRequest = vm.eventRequestManager()

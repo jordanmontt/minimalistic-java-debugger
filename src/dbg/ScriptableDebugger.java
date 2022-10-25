@@ -8,11 +8,7 @@ import com.sun.jdi.connect.VMStartException;
 import com.sun.jdi.event.*;
 import com.sun.jdi.request.*;
 
-import command.ContinueCommand;
-import command.FrameCommand;
-import command.InputCommand;
-import command.StepCommand;
-import command.StepOverCommand;
+import command.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,6 +64,7 @@ public class ScriptableDebugger {
 		hashmap.put("step-over", new StepOverCommand(ir));
 		hashmap.put("continue", new ContinueCommand(ir));
 		hashmap.put("frame", new FrameCommand(ir));
+		hashmap.put("temporaries", new TemporariesCommand(ir));
 		
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {
