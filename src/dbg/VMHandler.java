@@ -34,51 +34,43 @@ public class VMHandler {
         this.event = event;
     }
 
-    public void stepHandler() {
+    public void handleStep() {
         this.stepRequest.disable();
         this.stepRequest = enableStepIntoRequest(event);
     }
 
-    public void stepOverHandler() {
+    public void handleStepOver() {
         this.stepRequest.disable();
         this.stepRequest = enableStepOverRequest(event);
     }
 
-    public void continueHandler() {
+    public void handleContinue() {
         this.stepRequest.disable();
     }
 
-    public void handleFrame() throws IncompatibleThreadStateException {
+    public StackFrame handleFrame() throws IncompatibleThreadStateException {
         this.frame = getStackFrame(0);
         System.out.println(this.frame);
+        return this.frame;
     }
 
-    public void handleGetTemporaries() throws IncompatibleThreadStateException, AbsentInformationException {
+    public Map<LocalVariable, Value> handleGetTemporaries() throws IncompatibleThreadStateException, AbsentInformationException {
         this.frame = getStackFrame(0);
         this.temporaries = this.frame.getValues(this.frame.visibleVariables());
         for (LocalVariable v : this.frame.visibleVariables()) {
             System.out.println(v.name() + " -> " + this.temporaries.get(v));
         }
+        return this.temporaries;
     }
 
-    public void handleGetStack() throws IncompatibleThreadStateException {
+    public List<StackFrame> handleGetStack() throws IncompatibleThreadStateException {
         this.event.thread().suspend();
         this.stack = this.event.thread().frames();
         this.event.thread().resume();
-    }
-
-    private StepRequestHandler enableStepIntoRequest(LocatableEvent event) {
-        StepRequest stepRequest = vm.eventRequestManager()
-                .createStepRequest(event.thread(), StepRequest.STEP_MIN, StepRequest.STEP_INTO);
-        stepRequest.enable();
-        return new StepRequestHandlerImpl(stepRequest);
-    }
-
-    private StepRequestHandler enableStepOverRequest(LocatableEvent event) {
-        StepRequest stepRequest = vm.eventRequestManager()
-                .createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
-        stepRequest.enable();
-        return new StepRequestHandlerImpl(stepRequest);
+        for (StackFrame frame : this.stack) {
+            System.out.println(frame);
+        }
+        return this.stack;
     }
 
     public ObjectReference handleGetReceiver() throws IncompatibleThreadStateException {
@@ -100,11 +92,8 @@ public class VMHandler {
         return this.receiver;
     }
 
-    private ObjectReference getReceiverOfFrame(StackFrame frame) {
-        return frame.thisObject();
-    }
 
-    public void printVarHandler() throws IOException, IncompatibleThreadStateException, AbsentInformationException {
+    public void handlePrintVariable() throws IOException, IncompatibleThreadStateException, AbsentInformationException {
         System.out.println("Enter the name of the variable : ");
         String userInput = getUserInput();
         this.frame = getStackFrame(0);
@@ -112,15 +101,42 @@ public class VMHandler {
         System.out.println(val);
     }
 
-    private String getUserInput() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        return reader.readLine();
+    public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
+        this.executedMethod = getExecutedMethod();
+        this.executedMethodArguments = this.executedMethod.arguments();
+        for (LocalVariable localVar : this.executedMethodArguments) {
+            System.out.println(localVar);
+        }
+        return this.executedMethodArguments;
     }
 
-    public Method handleGetBeingExecutedMethod() throws IncompatibleThreadStateException {
+    public Method handleGetExecutedMethod() throws IncompatibleThreadStateException {
         this.executedMethod = getExecutedMethod();
         System.out.println(this.executedMethod.name());
         return this.executedMethod;
+    }
+
+    private StepRequestHandler enableStepIntoRequest(LocatableEvent event) {
+        StepRequest stepRequest = vm.eventRequestManager()
+                .createStepRequest(event.thread(), StepRequest.STEP_MIN, StepRequest.STEP_INTO);
+        stepRequest.enable();
+        return new StepRequestHandlerImpl(stepRequest);
+    }
+
+    private StepRequestHandler enableStepOverRequest(LocatableEvent event) {
+        StepRequest stepRequest = vm.eventRequestManager()
+                .createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
+        stepRequest.enable();
+        return new StepRequestHandlerImpl(stepRequest);
+    }
+
+    private ObjectReference getReceiverOfFrame(StackFrame frame) {
+        return frame.thisObject();
+    }
+
+    private String getUserInput() throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        return reader.readLine();
     }
 
     private Method getExecutedMethod() throws IncompatibleThreadStateException {
@@ -134,12 +150,4 @@ public class VMHandler {
         return frame;
     }
 
-    public List<LocalVariable> getMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
-        this.executedMethod = getExecutedMethod();
-        this.executedMethodArguments = this.executedMethod.arguments();
-        for (LocalVariable localVar : this.executedMethodArguments) {
-            System.out.println(localVar);
-        }
-        return this.executedMethodArguments;
-    }
 }

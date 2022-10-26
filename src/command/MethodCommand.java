@@ -4,16 +4,16 @@ import com.sun.jdi.IncompatibleThreadStateException;
 import dbg.VMHandler;
 
 public class MethodCommand implements InputCommand {
-    VMHandler ir;
+    VMHandler vmHandler;
 
-    public MethodCommand(VMHandler ir) {
-        this.ir = ir;
+    public MethodCommand(VMHandler vmHandler) {
+        this.vmHandler = vmHandler;
     }
 
     @Override
     public void execute() {
         try {
-            this.ir.handleGetBeingExecutedMethod();
+            this.vmHandler.handleGetExecutedMethod();
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
         }

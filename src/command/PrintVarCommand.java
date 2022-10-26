@@ -8,16 +8,16 @@ import java.io.IOException;
 
 public class PrintVarCommand implements InputCommand {
 
-	VMHandler ir;
+	VMHandler vmHandler;
 	
-	public PrintVarCommand(VMHandler ir) {
-		this.ir = ir;
+	public PrintVarCommand(VMHandler vmHandler) {
+		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
 		try {
-			this.ir.printVarHandler();
+			this.vmHandler.handlePrintVariable();
 		} catch (IOException | AbsentInformationException | IncompatibleThreadStateException e) {
 			throw new RuntimeException(e);
 		}

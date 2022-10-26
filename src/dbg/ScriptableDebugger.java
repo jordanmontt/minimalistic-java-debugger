@@ -57,20 +57,20 @@ public class ScriptableDebugger {
 			throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException, IncompatibleThreadStateException {
 		EventSet eventSet = null;
 		
-		VMHandler ir = new VMHandler(vm);
+		VMHandler vmHandler = new VMHandler(vm);
 		HashMap<String, InputCommand> hashmap = new HashMap<String, InputCommand>();
-		hashmap.put("step", new StepCommand(ir));
-		hashmap.put("step-over", new StepOverCommand(ir));
-		hashmap.put("continue", new ContinueCommand(ir));
-		hashmap.put("frame", new FrameCommand(ir));
-		hashmap.put("temporaries", new TemporariesCommand(ir));
-		hashmap.put("stack", new StackCommand(ir));
-		hashmap.put("receiver", new ReceiverCommand(ir));
-		hashmap.put("sender", new SenderCommand(ir));
-		hashmap.put("receiver-variables", new ReceiverVariablesCommand(ir));
-		hashmap.put("method", new MethodCommand(ir));
-		hashmap.put("arguments", new ArgumentsCommand(ir));
-		hashmap.put("print-var", new PrintVarCommand(ir));
+		hashmap.put("step", new StepCommand(vmHandler));
+		hashmap.put("step-over", new StepOverCommand(vmHandler));
+		hashmap.put("continue", new ContinueCommand(vmHandler));
+		hashmap.put("frame", new FrameCommand(vmHandler));
+		hashmap.put("temporaries", new TemporariesCommand(vmHandler));
+		hashmap.put("stack", new StackCommand(vmHandler));
+		hashmap.put("receiver", new ReceiverCommand(vmHandler));
+		hashmap.put("sender", new SenderCommand(vmHandler));
+		hashmap.put("receiver-variables", new ReceiverVariablesCommand(vmHandler));
+		hashmap.put("method", new MethodCommand(vmHandler));
+		hashmap.put("arguments", new ArgumentsCommand(vmHandler));
+		hashmap.put("print-var", new PrintVarCommand(vmHandler));
 
 		while ((eventSet = vm.eventQueue().remove()) != null) {
 			for (Event event : eventSet) {
@@ -94,13 +94,13 @@ public class ScriptableDebugger {
 
 				if (event instanceof BreakpointEvent) {
 					String userInput = getUserInput();
-					ir.setEvent((BreakpointEvent)event);
+					vmHandler.setEvent((BreakpointEvent)event);
 					hashmap.get(userInput).execute();
 				}
 
 				if (event instanceof StepEvent) {
 					String userInput = getUserInput();
-					ir.setEvent((StepEvent)event);
+					vmHandler.setEvent((StepEvent)event);
 					hashmap.get(userInput).execute();
 				}
 

@@ -5,16 +5,16 @@ import com.sun.jdi.IncompatibleThreadStateException;
 import dbg.VMHandler;
 
 public class ArgumentsCommand implements InputCommand {
-    VMHandler ir;
+    VMHandler vmHandler;
 
-    public ArgumentsCommand(VMHandler ir) {
-        this.ir = ir;
+    public ArgumentsCommand(VMHandler vmHandler) {
+        this.vmHandler = vmHandler;
     }
 
     @Override
     public void execute() {
         try {
-            this.ir.getMethodArguments();
+            this.vmHandler.handleGetMethodArguments();
         } catch (IncompatibleThreadStateException | AbsentInformationException e) {
             throw new RuntimeException(e);
         }

@@ -5,16 +5,16 @@ import dbg.VMHandler;
 
 public class SenderCommand implements InputCommand {
 
-    VMHandler ir;
+    VMHandler vmHandler;
 
-    public SenderCommand(VMHandler ir) {
-        this.ir = ir;
+    public SenderCommand(VMHandler vmHandler) {
+        this.vmHandler = vmHandler;
     }
 
     @Override
     public void execute() {
         try {
-            this.ir.handleGetSender();
+            this.vmHandler.handleGetSender();
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
         }

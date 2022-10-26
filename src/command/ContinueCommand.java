@@ -4,15 +4,15 @@ import dbg.VMHandler;
 
 public class ContinueCommand implements InputCommand {
 
-	VMHandler ir;
+	VMHandler vmHandler;
 	
-	public ContinueCommand(VMHandler ir) {
-		this.ir = ir; 
+	public ContinueCommand(VMHandler vmHandler) {
+		this.vmHandler = vmHandler; 
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.continueHandler();
+		this.vmHandler.handleContinue();
 
 	}
 

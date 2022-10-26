@@ -5,16 +5,16 @@ import dbg.VMHandler;
 
 public class ReceiverVariablesCommand implements InputCommand {
 
-	VMHandler ir;
+	VMHandler vmHandler;
 	
-	public ReceiverVariablesCommand(VMHandler ir) {
-		this.ir = ir;
+	public ReceiverVariablesCommand(VMHandler vmHandler) {
+		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
 		try {
-			this.ir.receiverVariablesHandler();
+			this.vmHandler.receiverVariablesHandler();
 		} catch (IncompatibleThreadStateException e) {
 			throw new RuntimeException(e);
 		}

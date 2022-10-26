@@ -6,16 +6,16 @@ import dbg.VMHandler;
 
 public class TemporariesCommand implements InputCommand {
 
-	VMHandler ir;
+	VMHandler vmHandler;
 	
-	public TemporariesCommand(VMHandler ir) {
-		this.ir = ir;
+	public TemporariesCommand(VMHandler vmHandler) {
+		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
 		try {
-			this.ir.handleGetTemporaries();
+			this.vmHandler.handleGetTemporaries();
 		} catch (IncompatibleThreadStateException | AbsentInformationException e) {
 			throw new RuntimeException(e);
 		}

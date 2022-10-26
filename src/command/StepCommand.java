@@ -4,14 +4,14 @@ import dbg.VMHandler;
 
 public class StepCommand implements InputCommand{
 
-	VMHandler ir;
+	VMHandler vmHandler;
 	
-	public StepCommand(VMHandler ir) {
-		this.ir = ir;
+	public StepCommand(VMHandler vmHandler) {
+		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
-		this.ir.stepHandler();
+		this.vmHandler.handleStep();
 	}
 }

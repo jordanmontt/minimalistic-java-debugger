@@ -5,16 +5,16 @@ import dbg.VMHandler;
 
 public class StackCommand implements InputCommand {
 
-	VMHandler ir;
+	VMHandler vmHandler;
 	
-	public StackCommand(VMHandler ir) {
-		this.ir = ir;
+	public StackCommand(VMHandler vmHandler) {
+		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
 		try {
-			this.ir.handleGetStack();
+			this.vmHandler.handleGetStack();
 		} catch (IncompatibleThreadStateException e) {
 			throw new RuntimeException(e);
 		}
