@@ -58,6 +58,7 @@ public class ScriptableDebugger {
 
         while ((eventSet = vm.eventQueue().remove()) != null) {
             for (Event event : eventSet) {
+            	System.out.println(event.toString());
                 if (event instanceof VMDisconnectEvent) {
                     printVmProcesses();
                     return;
@@ -67,12 +68,12 @@ public class ScriptableDebugger {
                     setBreakPoint(debugClass.getName(), 9);
                 }
                 if (event instanceof BreakpointEvent) {
+                	System.out.println("coucou");
                     executeCommandUntilIsResumable((BreakpointEvent) event);
                 }
                 if (event instanceof StepEvent) {
                     executeCommandUntilIsResumable((StepEvent) event);
                 }
-                System.out.println(event.toString());
                 vm.resume();
             }
         }
@@ -85,7 +86,7 @@ public class ScriptableDebugger {
         while (!this.inputInterpreter.isCommandResumable(userInput)) {
             userInput = getUserInput();
             this.inputInterpreter.executeCommand(userInput);
-        }
+        } 
     }
 
     private void printVmProcesses() throws IOException {
