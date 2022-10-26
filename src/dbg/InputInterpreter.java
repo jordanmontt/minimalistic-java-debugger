@@ -27,6 +27,7 @@ public class InputInterpreter {
         this.hashMap.put("method", new MethodCommand(vmHandler));
         this.hashMap.put("arguments", new ArgumentsCommand(vmHandler));
         this.hashMap.put("print-var", new PrintVarCommand(vmHandler));
+        this.hashMap.put("break", new BreakCommand(vmHandler));
     }
 
     private InputCommand getCommand(String userInput) {

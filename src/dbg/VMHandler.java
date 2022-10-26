@@ -8,6 +8,7 @@ import java.util.Map;
 
 import com.sun.jdi.*;
 import com.sun.jdi.event.LocatableEvent;
+import com.sun.jdi.request.BreakpointRequest;
 import com.sun.jdi.request.StepRequest;
 
 
@@ -103,6 +104,15 @@ public class VMHandler {
         System.out.println(val);
         return val;
     }
+    
+    public void handleBreak() throws IOException, AbsentInformationException, ClassNotFoundException {
+    	System.out.println("Enter the name of the file : ");
+        String userInput1 = getUserInput();
+        System.out.println("Enter the number of the line : ");
+        String userInput2 = getUserInput();
+        Class<?> classe = Class.forName(userInput1);
+        setBreakPoint(classe.getName(), Integer.parseInt(userInput2));
+    }
 
     public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
         this.executedMethod = getExecutedMethod();
@@ -152,6 +162,16 @@ public class VMHandler {
 
     private StackFrame getStackFrame(int index) throws IncompatibleThreadStateException {
         return this.event.thread().frame(index);
+    }
+    
+    private void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
+        for (ReferenceType targetClass : vm.allClasses()) {
+            if (targetClass.name().equals(className)) {
+                Location location = targetClass.locationsOfLine(lineNumber).get(0);
+                BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
+                bpReq.enable();
+            }
+        }
     }
 
 }
