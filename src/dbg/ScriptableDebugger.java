@@ -58,15 +58,7 @@ public class ScriptableDebugger {
         while ((eventSet = vm.eventQueue().remove()) != null) {
             for (Event event : eventSet) {
                 if (event instanceof VMDisconnectEvent) {
-                    System.out.println("=== End of program");
-                    System.out.println("Debugee output ===");
-                    InputStreamReader reader = new InputStreamReader(vm.process().getInputStream());
-                    OutputStreamWriter writer = new OutputStreamWriter(System.out);
-                    char[] buf = new char[vm.process().getInputStream().available()];
-
-                    reader.read(buf);
-                    writer.write(buf);
-                    writer.flush();
+                    printVmProcesses();
                     return;
                 }
                 if (event instanceof ClassPrepareEvent) {
@@ -87,6 +79,18 @@ public class ScriptableDebugger {
                 vm.resume();
             }
         }
+    }
+
+    private void printVmProcesses() throws IOException {
+        System.out.println("=== End of program");
+        System.out.println("Debugee output ===");
+        InputStreamReader reader = new InputStreamReader(vm.process().getInputStream());
+        OutputStreamWriter writer = new OutputStreamWriter(System.out);
+        char[] buf = new char[vm.process().getInputStream().available()];
+
+        reader.read(buf);
+        writer.write(buf);
+        writer.flush();
     }
 
     private String getUserInput() throws IOException {
