@@ -67,18 +67,10 @@ public class ScriptableDebugger {
                     setBreakPoint(debugClass.getName(), 9);
                 }
                 if (event instanceof BreakpointEvent) {
-                    String userInput = getUserInput();
-                    while (!this.inputInterpreter.isCommandResumable(userInput)) {
-                        executeCommand((BreakpointEvent) event, userInput);
-                        userInput = getUserInput();
-                    }
+                    executeCommandUntilIsResumable((BreakpointEvent) event);
                 }
                 if (event instanceof StepEvent) {
-                    String userInput = getUserInput();
-                    while (!this.inputInterpreter.isCommandResumable(userInput)) {
-                        executeCommand((StepEvent) event, userInput);
-                        userInput = getUserInput();
-                    }
+                    executeCommandUntilIsResumable((StepEvent) event);
                 }
                 System.out.println(event.toString());
                 vm.resume();
@@ -86,9 +78,14 @@ public class ScriptableDebugger {
         }
     }
 
-    private void executeCommand(LocatableEvent event, String userInput) throws IOException {
+    private void executeCommandUntilIsResumable(LocatableEvent event) throws IOException {
+        String userInput = getUserInput();
         vmHandler.setEvent(event);
         this.inputInterpreter.executeCommand(userInput);
+        while (!this.inputInterpreter.isCommandResumable(userInput)) {
+            userInput = getUserInput();
+            this.inputInterpreter.executeCommand(userInput);
+        }
     }
 
     private void printVmProcesses() throws IOException {
@@ -97,7 +94,6 @@ public class ScriptableDebugger {
         InputStreamReader reader = new InputStreamReader(vm.process().getInputStream());
         OutputStreamWriter writer = new OutputStreamWriter(System.out);
         char[] buf = new char[vm.process().getInputStream().available()];
-
         reader.read(buf);
         writer.write(buf);
         writer.flush();
