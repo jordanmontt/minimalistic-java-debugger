@@ -55,21 +55,24 @@ public class VMHandler {
     }
 
     public Map<LocalVariable, Value> handleGetTemporaries() throws IncompatibleThreadStateException, AbsentInformationException {
+        this.event.thread().suspend();
+
         this.frame = getStackFrame(0);
         this.temporaries = this.frame.getValues(this.frame.visibleVariables());
         for (LocalVariable v : this.frame.visibleVariables()) {
             System.out.println(v.name() + " -> " + this.temporaries.get(v));
         }
+        this.event.thread().resume();
         return this.temporaries;
     }
 
     public List<StackFrame> handleGetStack() throws IncompatibleThreadStateException {
         this.event.thread().suspend();
         this.stack = this.event.thread().frames();
-        this.event.thread().resume();
         for (StackFrame frame : this.stack) {
             System.out.println(frame);
         }
+        this.event.thread().resume();
         return this.stack;
     }
 
@@ -92,13 +95,13 @@ public class VMHandler {
         return this.receiver;
     }
 
-
-    public void handlePrintVariable() throws IOException, IncompatibleThreadStateException, AbsentInformationException {
+    public Value handlePrintVariable() throws IOException, IncompatibleThreadStateException, AbsentInformationException {
         System.out.println("Enter the name of the variable : ");
         String userInput = getUserInput();
         this.frame = getStackFrame(0);
         Value val = this.frame.getValue(this.frame.visibleVariableByName(userInput));
         System.out.println(val);
+        return val;
     }
 
     public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
@@ -140,14 +143,15 @@ public class VMHandler {
     }
 
     private Method getExecutedMethod() throws IncompatibleThreadStateException {
-        return getStackFrame(0).location().method();
+        StackFrame frame = getStackFrame(0);
+        this.event.thread().suspend();
+        Method method = frame.location().method();
+        this.event.thread().resume();
+        return method;
     }
 
     private StackFrame getStackFrame(int index) throws IncompatibleThreadStateException {
-        this.event.thread().suspend();
-        StackFrame frame = this.event.thread().frame(index);
-        this.event.thread().resume();
-        return frame;
+        return this.event.thread().frame(index);
     }
 
 }

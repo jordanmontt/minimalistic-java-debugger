@@ -18,6 +18,5 @@ public class SenderCommand implements InputCommand {
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
         }
-
     }
 }
