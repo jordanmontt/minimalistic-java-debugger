@@ -21,4 +21,8 @@ public class FrameCommand implements InputCommand {
 
 	}
 
+	@Override
+	public boolean isResumable() {
+		return false;
+	}
 }

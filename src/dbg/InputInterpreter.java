@@ -29,11 +29,19 @@ public class InputInterpreter {
         this.hashMap.put("print-var", new PrintVarCommand(vmHandler));
     }
 
-    public void executeCommand(String userInput) {
+    private InputCommand getCommand(String userInput) {
         if (this.hashMap.containsKey(userInput)) {
-            this.hashMap.get(userInput).execute();
+            return this.hashMap.get(userInput);
         } else {
-            System.out.println("The command: " + userInput + " does not exist.");
+            return new NullCommand(userInput);
         }
+    }
+
+    public void executeCommand(String userInput) {
+        getCommand(userInput).execute();
+    }
+
+    public boolean isCommandResumable(String userInput) {
+        return getCommand(userInput).isResumable();
     }
 }

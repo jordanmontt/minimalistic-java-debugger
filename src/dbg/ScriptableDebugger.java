@@ -19,6 +19,7 @@ public class ScriptableDebugger {
     private Class debugClass;
     private VirtualMachine vm;
     private InputInterpreter inputInterpreter;
+    private VMHandler vmHandler;
 
     public VirtualMachine connectAndLaunchVM()
             throws IOException, IllegalConnectorArgumentsException, VMStartException {
@@ -50,9 +51,9 @@ public class ScriptableDebugger {
     }
 
     public void startDebugger()
-            throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException, IncompatibleThreadStateException {
+            throws VMDisconnectedException, InterruptedException, IOException, AbsentInformationException {
         EventSet eventSet = null;
-        VMHandler vmHandler = new VMHandler(vm);
+        this.vmHandler = new VMHandler(vm);
         this.inputInterpreter = new InputInterpreter(vmHandler);
 
         while ((eventSet = vm.eventQueue().remove()) != null) {
@@ -67,18 +68,27 @@ public class ScriptableDebugger {
                 }
                 if (event instanceof BreakpointEvent) {
                     String userInput = getUserInput();
-                    vmHandler.setEvent((BreakpointEvent) event);
-                    this.inputInterpreter.executeCommand(userInput);
+                    while (!this.inputInterpreter.isCommandResumable(userInput)) {
+                        executeCommand((BreakpointEvent) event, userInput);
+                        userInput = getUserInput();
+                    }
                 }
                 if (event instanceof StepEvent) {
                     String userInput = getUserInput();
-                    vmHandler.setEvent((StepEvent) event);
-                    this.inputInterpreter.executeCommand(userInput);
+                    while (!this.inputInterpreter.isCommandResumable(userInput)) {
+                        executeCommand((StepEvent) event, userInput);
+                        userInput = getUserInput();
+                    }
                 }
                 System.out.println(event.toString());
                 vm.resume();
             }
         }
+    }
+
+    private void executeCommand(LocatableEvent event, String userInput) throws IOException {
+        vmHandler.setEvent(event);
+        this.inputInterpreter.executeCommand(userInput);
     }
 
     private void printVmProcesses() throws IOException {

@@ -18,4 +18,9 @@ public class MethodCommand implements InputCommand {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public boolean isResumable() {
+        return false;
+    }
 }

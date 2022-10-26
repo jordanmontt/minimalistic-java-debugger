@@ -2,5 +2,6 @@ package command;
 
 public interface InputCommand {
 	
-	public void execute(); 
+	void execute();
+	boolean isResumable();
 }

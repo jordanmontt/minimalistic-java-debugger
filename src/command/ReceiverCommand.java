@@ -20,4 +20,9 @@ public class ReceiverCommand implements InputCommand {
         }
 
     }
+
+    @Override
+    public boolean isResumable() {
+        return false;
+    }
 }

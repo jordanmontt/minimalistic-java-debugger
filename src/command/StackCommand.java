@@ -21,4 +21,8 @@ public class StackCommand implements InputCommand {
 
 	}
 
+	@Override
+	public boolean isResumable() {
+		return false;
+	}
 }

@@ -23,4 +23,8 @@ public class PrintVarCommand implements InputCommand {
 		}
 	}
 
+	@Override
+	public boolean isResumable() {
+		return false;
+	}
 }

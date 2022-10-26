@@ -16,4 +16,8 @@ public class StepOverCommand implements InputCommand {
 
 	}
 
+	@Override
+	public boolean isResumable() {
+		return true;
+	}
 }
