@@ -68,7 +68,6 @@ public class ScriptableDebugger {
                     setBreakPoint(debugClass.getName(), 9);
                 }
                 if (event instanceof BreakpointEvent) {
-                	System.out.println("coucou");
                     executeCommandUntilIsResumable((BreakpointEvent) event);
                 }
                 if (event instanceof StepEvent) {
