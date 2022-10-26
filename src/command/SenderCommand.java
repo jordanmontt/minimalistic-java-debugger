@@ -17,6 +17,8 @@ public class SenderCommand implements InputCommand {
             this.vmHandler.handleGetSender();
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("Cannot get the sender as there is no receiver");
         }
     }
 
