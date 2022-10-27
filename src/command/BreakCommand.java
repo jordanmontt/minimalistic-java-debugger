@@ -16,12 +16,8 @@ public class BreakCommand implements InputCommand {
 	public void execute() {
 		try {
 			this.vmHandler.handleBreak();
-		}catch(IOException e) {
+		}catch(IOException | AbsentInformationException | ClassNotFoundException e) {
 			throw new RuntimeException(e);
-		}catch(AbsentInformationException e) {
-			throw new RuntimeException(e);
-		}catch(ClassNotFoundException e) {
-			throw new RuntimeException (e);
 		}
 	}
 

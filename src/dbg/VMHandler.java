@@ -110,8 +110,7 @@ public class VMHandler {
         String userInput1 = getUserInput();
         System.out.println("Enter the number of the line : ");
         String userInput2 = getUserInput();
-        Class<?> classe = Class.forName(userInput1);
-        setBreakPoint(classe.getName(), Integer.parseInt(userInput2));
+        setBreakPoint("dbg." + userInput1, Integer.parseInt(userInput2));
     }
 
     public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
