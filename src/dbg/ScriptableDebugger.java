@@ -79,13 +79,13 @@ public class ScriptableDebugger {
     }
 
     private void executeCommandUntilIsResumable(LocatableEvent event) throws IOException {
-        String userInput = getUserInput();
-        vmHandler.setEvent(event);
-        this.inputInterpreter.executeCommand(userInput);
-        while (!this.inputInterpreter.isCommandResumable(userInput)) {
-            userInput = getUserInput();
-            this.inputInterpreter.executeCommand(userInput);
-        } 
+		    String userInput = getUserInput();
+		    vmHandler.setEvent(event);
+		    this.inputInterpreter.executeCommand(userInput);
+		    while (!this.inputInterpreter.isCommandResumable(userInput)) {
+		        userInput = getUserInput();
+		        this.inputInterpreter.executeCommand(userInput);
+		    } 
     }
 
     private void printVmProcesses() throws IOException {

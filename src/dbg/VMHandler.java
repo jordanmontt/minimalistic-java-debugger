@@ -9,8 +9,8 @@ import java.util.Map;
 import com.sun.jdi.*;
 import com.sun.jdi.event.LocatableEvent;
 import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.EventRequest;
 import com.sun.jdi.request.StepRequest;
-
 
 public class VMHandler {
 
@@ -26,7 +26,7 @@ public class VMHandler {
     private Method executedMethod;
     private List<LocalVariable> executedMethodArguments;
 
-    public VMHandler(VirtualMachine vm) {
+	public VMHandler(VirtualMachine vm) {
         this.stepRequest = new NullStepRequest();
         this.vm = vm;
     }
@@ -109,8 +109,8 @@ public class VMHandler {
     	System.out.println("Enter the name of the file : ");
         String userInput1 = getUserInput();
         System.out.println("Enter the number of the line : ");
-        String userInput2 = getUserInput();
-        setBreakPoint("dbg." + userInput1, Integer.parseInt(userInput2));
+        int userInput2 = Integer.parseInt(getUserInput());
+        setBreakPoint("dbg." + userInput1, userInput2);
     }
     
     public void handleBreakPoints() {
@@ -121,6 +121,23 @@ public class VMHandler {
             }
         }
     }
+    
+    public void handleBreakOnce() throws IOException, AbsentInformationException, ClassNotFoundException {
+    	System.out.println("Enter the name of the file : ");
+        String userInput1 = getUserInput();
+        System.out.println("Enter the number of the line : ");
+        int userInput2 = Integer.parseInt(getUserInput());
+        for (ReferenceType targetClass : vm.allClasses()) {
+            if (targetClass.name().equals("dbg." + userInput1)) {
+            	Location location = targetClass.locationsOfLine(userInput2).get(0);
+                BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
+                bpReq.addCountFilter(1);
+                bpReq.enable();
+            }
+        }
+    }
+    
+    
 
     public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
         this.executedMethod = getExecutedMethod();

@@ -29,6 +29,8 @@ public class InputInterpreter {
         this.hashMap.put("print-var", new PrintVarCommand(vmHandler));
         this.hashMap.put("break", new BreakCommand(vmHandler));
         this.hashMap.put("breakpoints", new BreakPointsCommand(vmHandler));
+        this.hashMap.put("break-once", new BreakOnceCommand(vmHandler));
+        this.hashMap.put("break-on-count", new BreakOnCountCommand(vmHandler));
     }
 
     private InputCommand getCommand(String userInput) {
