@@ -6,18 +6,18 @@ import com.sun.jdi.AbsentInformationException;
 
 import dbg.VMHandler;
 
-public class BreakOnceCommand implements InputCommand {
+public class BreakOnCountCommand implements InputCommand {
 
 	VMHandler vmHandler;
 	
-	public BreakOnceCommand(VMHandler vmHandler) {
+	public BreakOnCountCommand(VMHandler vmHandler) {
 		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
 		try {
-			this.vmHandler.handleBreakOnce();
+			this.vmHandler.handleBreakOnCount();
 		} catch(IOException | AbsentInformationException e) {
 			throw new RuntimeException(e);
 		}

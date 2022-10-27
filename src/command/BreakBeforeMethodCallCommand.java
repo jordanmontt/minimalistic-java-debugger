@@ -2,23 +2,21 @@ package command;
 
 import java.io.IOException;
 
-import com.sun.jdi.AbsentInformationException;
-
 import dbg.VMHandler;
 
-public class BreakOnceCommand implements InputCommand {
+public class BreakBeforeMethodCallCommand implements InputCommand {
 
 	VMHandler vmHandler;
 	
-	public BreakOnceCommand(VMHandler vmHandler) {
+	public BreakBeforeMethodCallCommand(VMHandler vmHandler) {
 		this.vmHandler = vmHandler;
 	}
 	
 	@Override
 	public void execute() {
 		try {
-			this.vmHandler.handleBreakOnce();
-		} catch(IOException | AbsentInformationException e) {
+			this.vmHandler.handleBreakBeforeMethodCall();
+		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

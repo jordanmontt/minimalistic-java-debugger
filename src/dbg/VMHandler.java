@@ -122,7 +122,7 @@ public class VMHandler {
         }
     }
     
-    public void handleBreakOnce() throws IOException, AbsentInformationException, ClassNotFoundException {
+    public void handleBreakOnce() throws IOException, AbsentInformationException {
     	System.out.println("Enter the name of the file : ");
         String userInput1 = getUserInput();
         System.out.println("Enter the number of the line : ");
@@ -137,7 +137,35 @@ public class VMHandler {
         }
     }
     
+    public void handleBreakOnCount() throws IOException, AbsentInformationException {
+    	System.out.println("Enter the name of the file : ");
+        String userInput1 = getUserInput();
+        System.out.println("Enter the number of the line : ");
+        int userInput2 = Integer.parseInt(getUserInput());
+        System.out.println("Enter the count number : ");
+        int userInput3 = Integer.parseInt(getUserInput());
+        for (ReferenceType targetClass : vm.allClasses()) {
+            if (targetClass.name().equals("dbg." + userInput1)) {
+            	Location location = targetClass.locationsOfLine(userInput2).get(0);
+                BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
+                bpReq.addCountFilter(userInput3);
+                bpReq.disable();
+            }
+        }
+    }
     
+    public void handleBreakBeforeMethodCall() throws IOException {
+    	System.out.println("Enter the name of the method : ");
+        String userInput1 = getUserInput();
+        for (ReferenceType targetClass : vm.allClasses()) {
+        	List<Method> methods = targetClass.methodsByName(userInput1);
+        	if(methods.size() > 0) {
+        		Location location = methods.get(0).location();
+        		BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
+        		bpReq.enable();
+        	}
+        }
+    }
 
     public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
         this.executedMethod = getExecutedMethod();
