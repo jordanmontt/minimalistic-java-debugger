@@ -112,6 +112,15 @@ public class VMHandler {
         String userInput2 = getUserInput();
         setBreakPoint("dbg." + userInput1, Integer.parseInt(userInput2));
     }
+    
+    public void handleBreakPoints() {
+        List <BreakpointRequest> bpReq = vm.eventRequestManager().breakpointRequests();
+        for (BreakpointRequest bp : bpReq) {
+            if(bp.isEnabled()) {
+            	System.out.println("Breakpoint : " + bp + ", location : " + bp.location());
+            }
+        }
+    }
 
     public List<LocalVariable> handleGetMethodArguments() throws IncompatibleThreadStateException, AbsentInformationException {
         this.executedMethod = getExecutedMethod();
