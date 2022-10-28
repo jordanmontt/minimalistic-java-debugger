@@ -18,7 +18,7 @@ public class BreakOnCountCommand implements InputCommand {
     public void execute() {
         try {
             this.vmHandler.handleBreakOnCount();
-        } catch (IOException | AbsentInformationException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

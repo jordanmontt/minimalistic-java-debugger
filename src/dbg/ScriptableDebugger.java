@@ -64,11 +64,17 @@ public class ScriptableDebugger {
                     return;
                 }
                 if (event instanceof ClassPrepareEvent) {
-                    setBreakPoint(debugClass.getName(), 6);
-                    setBreakPoint(debugClass.getName(), 9);
+                    this.vmHandler.setBreakPoint(debugClass.getName(), 6);
+                    this.vmHandler.setBreakPoint(debugClass.getName(), 9);
                 }
                 if (event instanceof BreakpointEvent) {
-                    executeCommandUntilIsResumable((BreakpointEvent) event);
+                	if(this.vmHandler.getBreak_on_count_counter() > 0) {
+                		this.vmHandler.setBreak_on_count_counter(this.vmHandler.getBreak_on_count_counter() - 1);
+                	}
+                	if(this.vmHandler.getBreak_on_count_counter() == 0) {
+                		this.vmHandler.setBreakPoint("dbg." + this.vmHandler.getBreak_on_count_file(), this.vmHandler.getBreak_on_count_line());
+                	}
+                	executeCommandUntilIsResumable((BreakpointEvent) event);
                 }
                 if (event instanceof StepEvent) {
                     executeCommandUntilIsResumable((StepEvent) event);
@@ -79,11 +85,11 @@ public class ScriptableDebugger {
     }
 
     private void executeCommandUntilIsResumable(LocatableEvent event) throws IOException {
-	    String userInput = getUserInput();
+	    String userInput = this.vmHandler.getUserInput();
 	    vmHandler.setEvent(event);
 	    this.inputInterpreter.executeCommand(userInput);
 	    while (!this.inputInterpreter.isCommandResumable(userInput)) {
-	        userInput = getUserInput();
+	        userInput = this.vmHandler.getUserInput();
 	        this.inputInterpreter.executeCommand(userInput);
 	    } 
     }
@@ -97,21 +103,6 @@ public class ScriptableDebugger {
         reader.read(buf);
         writer.write(buf);
         writer.flush();
-    }
-
-    private String getUserInput() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        return reader.readLine();
-    }
-
-    private void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
-        for (ReferenceType targetClass : vm.allClasses()) {
-            if (targetClass.name().equals(className)) {
-                Location location = targetClass.locationsOfLine(lineNumber).get(0);
-                BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
-                bpReq.enable();
-            }
-        }
     }
 
     public void enableClassPrepareRequest(VirtualMachine vm) {

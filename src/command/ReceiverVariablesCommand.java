@@ -14,7 +14,7 @@ public class ReceiverVariablesCommand implements InputCommand {
     @Override
     public void execute() {
         try {
-            this.vmHandler.receiverVariablesHandler();
+            this.vmHandler.handleReceiverVariables();
         } catch (IncompatibleThreadStateException e) {
             throw new RuntimeException(e);
         } catch (NullPointerException e) {

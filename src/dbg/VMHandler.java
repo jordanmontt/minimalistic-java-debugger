@@ -25,16 +25,39 @@ public class VMHandler {
     private Map<Field, Value> receiverTempVariables;
     private Method executedMethod;
     private List<LocalVariable> executedMethodArguments;
+    private String break_on_count_file;
+	private int break_on_count_line;
+	private int break_on_count_counter;
 
 	public VMHandler(VirtualMachine vm) {
         this.stepRequest = new NullStepRequest();
         this.vm = vm;
+        this.break_on_count_file = "";
+        this.break_on_count_line = -1;
+        this.break_on_count_counter = -1;
+        
     }
 
     public void setEvent(LocatableEvent event) {
         this.event = event;
     }
+    
+    public String getBreak_on_count_file() {
+		return break_on_count_file;
+	}
 
+    public int getBreak_on_count_line() {
+		return break_on_count_line;
+	}
+    
+    public int getBreak_on_count_counter() {
+		return break_on_count_counter;
+	}
+    
+    public void setBreak_on_count_counter(int break_on_count_counter) {
+		this.break_on_count_counter = break_on_count_counter;
+	}
+    
     public void handleStep() {
         this.stepRequest.disable();
         this.stepRequest = enableStepIntoRequest(event);
@@ -89,7 +112,7 @@ public class VMHandler {
         return this.sender;
     }
 
-    public ObjectReference receiverVariablesHandler() throws IncompatibleThreadStateException {
+    public ObjectReference handleReceiverVariables() throws IncompatibleThreadStateException {
         this.receiver = getReceiverOfFrame(getStackFrame(0));
         this.receiverTempVariables = this.receiver.getValues(this.receiver.referenceType().allFields());
         System.out.println(this.receiverTempVariables);
@@ -137,21 +160,13 @@ public class VMHandler {
         }
     }
     
-    public void handleBreakOnCount() throws IOException, AbsentInformationException {
+    public void handleBreakOnCount() throws IOException {
     	System.out.println("Enter the name of the file : ");
-        String userInput1 = getUserInput();
+        this.break_on_count_file = getUserInput();
         System.out.println("Enter the number of the line : ");
-        int userInput2 = Integer.parseInt(getUserInput());
-        System.out.println("Enter the count number : ");
-        int userInput3 = Integer.parseInt(getUserInput());
-        for (ReferenceType targetClass : vm.allClasses()) {
-            if (targetClass.name().equals("dbg." + userInput1)) {
-            	Location location = targetClass.locationsOfLine(userInput2).get(0);
-                BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
-                bpReq.addCountFilter(userInput3);
-                bpReq.disable();
-            }
-        }
+        this.break_on_count_line = Integer.parseInt(getUserInput());
+        System.out.println("Enter the count number > 0 : ");
+        this.break_on_count_counter = Integer.parseInt(getUserInput());
     }
     
     public void handleBreakBeforeMethodCall() throws IOException {
@@ -182,14 +197,14 @@ public class VMHandler {
         return this.executedMethod;
     }
 
-    private StepRequestHandler enableStepIntoRequest(LocatableEvent event) {
+    public StepRequestHandler enableStepIntoRequest(LocatableEvent event) {
         StepRequest stepRequest = vm.eventRequestManager()
                 .createStepRequest(event.thread(), StepRequest.STEP_MIN, StepRequest.STEP_INTO);
         stepRequest.enable();
         return new StepRequestHandlerImpl(stepRequest);
     }
 
-    private StepRequestHandler enableStepOverRequest(LocatableEvent event) {
+    public StepRequestHandler enableStepOverRequest(LocatableEvent event) {
         StepRequest stepRequest = vm.eventRequestManager()
                 .createStepRequest(event.thread(), StepRequest.STEP_LINE, StepRequest.STEP_OVER);
         stepRequest.enable();
@@ -200,12 +215,12 @@ public class VMHandler {
         return frame.thisObject();
     }
 
-    private String getUserInput() throws IOException {
+    public String getUserInput() throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         return reader.readLine();
     }
 
-    private Method getExecutedMethod() throws IncompatibleThreadStateException {
+    public Method getExecutedMethod() throws IncompatibleThreadStateException {
         StackFrame frame = getStackFrame(0);
         this.event.thread().suspend();
         Method method = frame.location().method();
@@ -213,11 +228,11 @@ public class VMHandler {
         return method;
     }
 
-    private StackFrame getStackFrame(int index) throws IncompatibleThreadStateException {
+    public StackFrame getStackFrame(int index) throws IncompatibleThreadStateException {
         return this.event.thread().frame(index);
     }
     
-    private void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
+    public void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
         for (ReferenceType targetClass : vm.allClasses()) {
             if (targetClass.name().equals(className)) {
                 Location location = targetClass.locationsOfLine(lineNumber).get(0);
