@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import dbg.VMHandler;
 
-public class BreakBeforeMethodCallCommand implements InputCommand {
+public class BreakBeforeMethodCallCommand implements DebuggingCommand {
 
 	VMHandler vmHandler;
 	

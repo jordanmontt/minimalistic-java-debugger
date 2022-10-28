@@ -4,7 +4,7 @@ import com.sun.jdi.AbsentInformationException;
 import com.sun.jdi.IncompatibleThreadStateException;
 import dbg.VMHandler;
 
-public class TemporariesCommand implements InputCommand {
+public class TemporariesCommand implements DebuggingCommand {
 
 	VMHandler vmHandler;
 	

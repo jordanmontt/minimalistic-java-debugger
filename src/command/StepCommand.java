@@ -2,7 +2,7 @@ package command;
 
 import dbg.VMHandler;
 
-public class StepCommand implements InputCommand {
+public class StepCommand implements DebuggingCommand {
 
     VMHandler vmHandler;
 

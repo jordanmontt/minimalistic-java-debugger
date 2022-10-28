@@ -2,11 +2,9 @@ package command;
 
 import java.io.IOException;
 
-import com.sun.jdi.AbsentInformationException;
-
 import dbg.VMHandler;
 
-public class BreakOnCountCommand implements InputCommand {
+public class BreakOnCountCommand implements DebuggingCommand {
 
     VMHandler vmHandler;
 

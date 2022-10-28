@@ -1,6 +1,6 @@
 package command;
 
-public interface InputCommand {
+public interface DebuggingCommand {
 	
 	void execute();
 	boolean isResumable();

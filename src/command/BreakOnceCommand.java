@@ -6,7 +6,7 @@ import com.sun.jdi.AbsentInformationException;
 
 import dbg.VMHandler;
 
-public class BreakOnceCommand implements InputCommand {
+public class BreakOnceCommand implements DebuggingCommand {
 
 	VMHandler vmHandler;
 	

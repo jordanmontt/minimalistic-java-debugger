@@ -1,14 +1,16 @@
 package dbg;
 
-import com.sun.jdi.*;
+import com.sun.jdi.AbsentInformationException;
+import com.sun.jdi.Bootstrap;
+import com.sun.jdi.VMDisconnectedException;
+import com.sun.jdi.VirtualMachine;
 import com.sun.jdi.connect.Connector;
 import com.sun.jdi.connect.IllegalConnectorArgumentsException;
 import com.sun.jdi.connect.LaunchingConnector;
 import com.sun.jdi.connect.VMStartException;
 import com.sun.jdi.event.*;
-import com.sun.jdi.request.*;
+import com.sun.jdi.request.ClassPrepareRequest;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -26,8 +28,7 @@ public class ScriptableDebugger {
         LaunchingConnector launchingConnector = Bootstrap.virtualMachineManager().defaultConnector();
         Map<String, Connector.Argument> arguments = launchingConnector.defaultArguments();
         arguments.get("main").setValue(debugClass.getName());
-        VirtualMachine vm = launchingConnector.launch(arguments);
-        return vm;
+        return launchingConnector.launch(arguments);
     }
 
     public void attachTo(Class debuggeeClass) {
@@ -36,10 +37,6 @@ public class ScriptableDebugger {
             this.vm = connectAndLaunchVM();
             enableClassPrepareRequest(this.vm);
             startDebugger();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalConnectorArgumentsException e) {
-            e.printStackTrace();
         } catch (VMStartException e) {
             e.printStackTrace();
             System.out.println(e);
@@ -58,7 +55,7 @@ public class ScriptableDebugger {
 
         while ((eventSet = vm.eventQueue().remove()) != null) {
             for (Event event : eventSet) {
-            	System.out.println(event.toString());
+                System.out.println(event.toString());
                 if (event instanceof VMDisconnectEvent) {
                     printVmProcesses();
                     return;
@@ -68,13 +65,13 @@ public class ScriptableDebugger {
                     this.vmHandler.setBreakPoint(debugClass.getName(), 9);
                 }
                 if (event instanceof BreakpointEvent) {
-                	if(this.vmHandler.getBreak_on_count_counter() > 0) {
-                		this.vmHandler.setBreak_on_count_counter(this.vmHandler.getBreak_on_count_counter() - 1);
-                	}
-                	if(this.vmHandler.getBreak_on_count_counter() == 0) {
-                		this.vmHandler.setBreakPoint("dbg." + this.vmHandler.getBreak_on_count_file(), this.vmHandler.getBreak_on_count_line());
-                	}
-                	executeCommandUntilIsResumable((BreakpointEvent) event);
+                    if (this.vmHandler.getBreakOnCountCounter() > 0) {
+                        this.vmHandler.setBreakOnCountCounter(this.vmHandler.getBreakOnCountCounter() - 1);
+                    }
+                    if (this.vmHandler.getBreakOnCountCounter() == 0) {
+                        this.vmHandler.setBreakPoint("dbg." + this.vmHandler.getBreakOnCountFile(), this.vmHandler.getBreakOnCountLine());
+                    }
+                    executeCommandUntilIsResumable((BreakpointEvent) event);
                 }
                 if (event instanceof StepEvent) {
                     executeCommandUntilIsResumable((StepEvent) event);
@@ -85,13 +82,13 @@ public class ScriptableDebugger {
     }
 
     private void executeCommandUntilIsResumable(LocatableEvent event) throws IOException {
-	    String userInput = this.vmHandler.getUserInput();
-	    vmHandler.setEvent(event);
-	    this.inputInterpreter.executeCommand(userInput);
-	    while (!this.inputInterpreter.isCommandResumable(userInput)) {
-	        userInput = this.vmHandler.getUserInput();
-	        this.inputInterpreter.executeCommand(userInput);
-	    } 
+        String userInput = this.vmHandler.getUserInput();
+        vmHandler.setEvent(event);
+        this.inputInterpreter.executeCommand(userInput);
+        while (!this.inputInterpreter.isCommandResumable(userInput)) {
+            userInput = this.vmHandler.getUserInput();
+            this.inputInterpreter.executeCommand(userInput);
+        }
     }
 
     private void printVmProcesses() throws IOException {

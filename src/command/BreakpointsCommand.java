@@ -2,7 +2,7 @@ package command;
 
 import dbg.VMHandler;
 
-public class BreakpointsCommand implements InputCommand {
+public class BreakpointsCommand implements DebuggingCommand {
 	
 	VMHandler vmHandler;
 	

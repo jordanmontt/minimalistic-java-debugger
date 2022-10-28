@@ -3,7 +3,7 @@ package command;
 import com.sun.jdi.IncompatibleThreadStateException;
 import dbg.VMHandler;
 
-public class StackCommand implements InputCommand {
+public class StackCommand implements DebuggingCommand {
 
 	VMHandler vmHandler;
 	

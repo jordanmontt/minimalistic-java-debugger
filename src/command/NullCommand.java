@@ -1,6 +1,6 @@
 package command;
 
-public class NullCommand implements InputCommand {
+public class NullCommand implements DebuggingCommand {
     private String userInput;
 
     public NullCommand(String userInput) {

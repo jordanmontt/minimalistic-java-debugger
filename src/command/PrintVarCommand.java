@@ -6,7 +6,7 @@ import dbg.VMHandler;
 
 import java.io.IOException;
 
-public class PrintVarCommand implements InputCommand {
+public class PrintVarCommand implements DebuggingCommand {
 
 	VMHandler vmHandler;
 	

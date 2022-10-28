@@ -1,16 +1,15 @@
 package dbg;
 
+import com.sun.jdi.*;
+import com.sun.jdi.event.LocatableEvent;
+import com.sun.jdi.request.BreakpointRequest;
+import com.sun.jdi.request.StepRequest;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
 import java.util.Map;
-
-import com.sun.jdi.*;
-import com.sun.jdi.event.LocatableEvent;
-import com.sun.jdi.request.BreakpointRequest;
-import com.sun.jdi.request.EventRequest;
-import com.sun.jdi.request.StepRequest;
 
 public class VMHandler {
 
@@ -25,39 +24,39 @@ public class VMHandler {
     private Map<Field, Value> receiverTempVariables;
     private Method executedMethod;
     private List<LocalVariable> executedMethodArguments;
-    private String break_on_count_file;
-	private int break_on_count_line;
-	private int break_on_count_counter;
+    private String breakOnCountFile;
+    private int breakOnCountLine;
+    private int breakOnCountCounter;
 
-	public VMHandler(VirtualMachine vm) {
+    public VMHandler(VirtualMachine vm) {
         this.stepRequest = new NullStepRequest();
         this.vm = vm;
-        this.break_on_count_file = "";
-        this.break_on_count_line = -1;
-        this.break_on_count_counter = -1;
-        
+        this.breakOnCountFile = "";
+        this.breakOnCountLine = -1;
+        this.breakOnCountCounter = -1;
+
     }
 
     public void setEvent(LocatableEvent event) {
         this.event = event;
     }
-    
-    public String getBreak_on_count_file() {
-		return break_on_count_file;
-	}
 
-    public int getBreak_on_count_line() {
-		return break_on_count_line;
-	}
-    
-    public int getBreak_on_count_counter() {
-		return break_on_count_counter;
-	}
-    
-    public void setBreak_on_count_counter(int break_on_count_counter) {
-		this.break_on_count_counter = break_on_count_counter;
-	}
-    
+    public String getBreakOnCountFile() {
+        return breakOnCountFile;
+    }
+
+    public int getBreakOnCountLine() {
+        return breakOnCountLine;
+    }
+
+    public int getBreakOnCountCounter() {
+        return breakOnCountCounter;
+    }
+
+    public void setBreakOnCountCounter(int breakOnCountCounter) {
+        this.breakOnCountCounter = breakOnCountCounter;
+    }
+
     public void handleStep() {
         this.stepRequest.disable();
         this.stepRequest = enableStepIntoRequest(event);
@@ -127,58 +126,58 @@ public class VMHandler {
         System.out.println(val);
         return val;
     }
-    
+
     public void handleBreak() throws IOException, AbsentInformationException, ClassNotFoundException {
-    	System.out.println("Enter the name of the file : ");
-        String userInput1 = getUserInput();
+        System.out.println("Enter the name of the file : ");
+        String fileName = getUserInput();
         System.out.println("Enter the number of the line : ");
-        int userInput2 = Integer.parseInt(getUserInput());
-        setBreakPoint("dbg." + userInput1, userInput2);
+        int lineNumber = Integer.parseInt(getUserInput());
+        setBreakPoint("dbg." + fileName, lineNumber);
     }
-    
+
     public void handleBreakPoints() {
-        List <BreakpointRequest> bpReq = vm.eventRequestManager().breakpointRequests();
+        List<BreakpointRequest> bpReq = vm.eventRequestManager().breakpointRequests();
         for (BreakpointRequest bp : bpReq) {
-            if(bp.isEnabled()) {
-            	System.out.println("Breakpoint : " + bp + ", location : " + bp.location());
+            if (bp.isEnabled()) {
+                System.out.println("Breakpoint : " + bp + ", location : " + bp.location());
             }
         }
     }
-    
+
     public void handleBreakOnce() throws IOException, AbsentInformationException {
-    	System.out.println("Enter the name of the file : ");
-        String userInput1 = getUserInput();
+        System.out.println("Enter the name of the file : ");
+        String fileName = getUserInput();
         System.out.println("Enter the number of the line : ");
-        int userInput2 = Integer.parseInt(getUserInput());
+        int lineNumber = Integer.parseInt(getUserInput());
         for (ReferenceType targetClass : vm.allClasses()) {
-            if (targetClass.name().equals("dbg." + userInput1)) {
-            	Location location = targetClass.locationsOfLine(userInput2).get(0);
+            if (targetClass.name().equals("dbg." + fileName)) {
+                Location location = targetClass.locationsOfLine(lineNumber).get(0);
                 BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
                 bpReq.addCountFilter(1);
                 bpReq.enable();
             }
         }
     }
-    
+
     public void handleBreakOnCount() throws IOException {
-    	System.out.println("Enter the name of the file : ");
-        this.break_on_count_file = getUserInput();
+        System.out.println("Enter the name of the file : ");
+        this.breakOnCountFile = getUserInput();
         System.out.println("Enter the number of the line : ");
-        this.break_on_count_line = Integer.parseInt(getUserInput());
+        this.breakOnCountLine = Integer.parseInt(getUserInput());
         System.out.println("Enter the count number > 0 : ");
-        this.break_on_count_counter = Integer.parseInt(getUserInput());
+        this.breakOnCountCounter = Integer.parseInt(getUserInput());
     }
-    
+
     public void handleBreakBeforeMethodCall() throws IOException {
-    	System.out.println("Enter the name of the method : ");
-        String userInput1 = getUserInput();
+        System.out.println("Enter the name of the method : ");
+        String methodName = getUserInput();
         for (ReferenceType targetClass : vm.allClasses()) {
-        	List<Method> methods = targetClass.methodsByName(userInput1);
-        	if(methods.size() > 0) {
-        		Location location = methods.get(0).location();
-        		BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
-        		bpReq.enable();
-        	}
+            List<Method> methods = targetClass.methodsByName(methodName);
+            if (methods.size() > 0) {
+                Location location = methods.get(0).location();
+                BreakpointRequest bpReq = vm.eventRequestManager().createBreakpointRequest(location);
+                bpReq.enable();
+            }
         }
     }
 
@@ -231,7 +230,7 @@ public class VMHandler {
     public StackFrame getStackFrame(int index) throws IncompatibleThreadStateException {
         return this.event.thread().frame(index);
     }
-    
+
     public void setBreakPoint(String className, int lineNumber) throws AbsentInformationException {
         for (ReferenceType targetClass : vm.allClasses()) {
             if (targetClass.name().equals(className)) {

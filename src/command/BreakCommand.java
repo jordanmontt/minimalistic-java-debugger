@@ -4,7 +4,7 @@ import java.io.IOException;
 import com.sun.jdi.AbsentInformationException;
 import dbg.VMHandler;
 
-public class BreakCommand implements InputCommand {
+public class BreakCommand implements DebuggingCommand {
 
 	VMHandler vmHandler;
 	
