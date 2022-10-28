@@ -27,4 +27,14 @@ public class PrintVarCommand implements InputCommand {
 	public boolean isResumable() {
 		return false;
 	}
+
+	@Override
+	public String commandName() {
+		return "print-var";
+	}
+
+	@Override
+	public String description() {
+		return "imprime la valeur de la variable passée en paramètre (le nom de la variable sera demandé après saisir la commande).";
+	}
 }

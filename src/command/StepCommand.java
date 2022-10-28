@@ -19,4 +19,14 @@ public class StepCommand implements InputCommand {
     public boolean isResumable() {
         return true;
     }
+
+    @Override
+    public String commandName() {
+        return "step";
+    }
+
+    @Override
+    public String description() {
+        return "execute la prochaine instruction. S’il s’agit d’un appel de méthode, l’exécution entre dans cette dernière.";
+    }
 }

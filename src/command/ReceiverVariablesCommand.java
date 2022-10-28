@@ -26,4 +26,14 @@ public class ReceiverVariablesCommand implements InputCommand {
     public boolean isResumable() {
         return false;
     }
+
+    @Override
+    public String commandName() {
+        return "receiver-variables";
+    }
+
+    @Override
+    public String description() {
+        return "renvoie et imprime la liste des variables d’instance du receveur courant, sous la forme d’un couple nom → valeur.";
+    }
 }

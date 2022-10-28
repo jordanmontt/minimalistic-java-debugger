@@ -24,4 +24,14 @@ public class ArgumentsCommand implements InputCommand {
     public boolean isResumable() {
         return false;
     }
+
+    @Override
+    public String commandName() {
+        return "arguments";
+    }
+
+    @Override
+    public String description() {
+        return "renvoie et imprime la liste des arguments de la méthode en cours d’exécution, sous la forme d’un couple nom → valeur.";
+    }
 }

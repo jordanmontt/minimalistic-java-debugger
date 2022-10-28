@@ -25,4 +25,14 @@ public class ReceiverCommand implements InputCommand {
     public boolean isResumable() {
         return false;
     }
+
+    @Override
+    public String commandName() {
+        return "receiver";
+    }
+
+    @Override
+    public String description() {
+        return "envoie le receveur de la méthode courante (this).";
+    }
 }

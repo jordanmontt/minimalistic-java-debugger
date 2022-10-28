@@ -16,4 +16,14 @@ public class NullCommand implements InputCommand {
     public boolean isResumable() {
         return false;
     }
+
+    @Override
+    public String commandName() {
+        return "null command";
+    }
+
+    @Override
+    public String description() {
+        return "I am a null command that is only used to avoid ifs.";
+    }
 }

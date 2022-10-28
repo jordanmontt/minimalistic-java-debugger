@@ -95,7 +95,7 @@ public class HelpCommand implements InputCommand {
         stringBuilder.append("installe un point d’arrêt à la ligne lineNumber du fichier fileName. Ce point d’arrêt ne s’active qu’après avoir été atteint un certain nombre de fois count (les paramètres seront demandés après saisir la commande).");
         stringBuilder.append("\n");
 
-        stringBuilder.append("- break-before-method-cal");
+        stringBuilder.append("- break-before-method-call");
         stringBuilder.append("\n");
         stringBuilder.append("configure l’exécution pour s’arrêter au tout début de l’exécution de la méthode methodName. (le nom sera demandé après saisir la commande).");
         stringBuilder.append("\n");
@@ -106,5 +106,15 @@ public class HelpCommand implements InputCommand {
     @Override
     public boolean isResumable() {
         return false;
+    }
+
+    @Override
+    public String commandName() {
+        return null;
+    }
+
+    @Override
+    public String description() {
+        return null;
     }
 }

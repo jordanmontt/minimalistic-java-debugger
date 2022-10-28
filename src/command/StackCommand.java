@@ -25,4 +25,14 @@ public class StackCommand implements InputCommand {
 	public boolean isResumable() {
 		return false;
 	}
+
+	@Override
+	public String commandName() {
+		return "stack";
+	}
+
+	@Override
+	public String description() {
+		return "renvoie la pile d’appel de méthodes qui a amené l’exécution au point courant.";
+	}
 }

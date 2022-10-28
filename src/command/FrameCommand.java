@@ -25,4 +25,14 @@ public class FrameCommand implements InputCommand {
 	public boolean isResumable() {
 		return false;
 	}
+
+	@Override
+	public String commandName() {
+		return "frame";
+	}
+
+	@Override
+	public String description() {
+		return "envoie et imprime la frame courante.";
+	}
 }

@@ -20,4 +20,14 @@ public class ContinueCommand implements InputCommand {
 	public boolean isResumable() {
 		return true;
 	}
+
+	@Override
+	public String commandName() {
+		return "continue";
+	}
+
+	@Override
+	public String description() {
+		return "continue l’exécution jusqu’au prochain point d’arrêt. La granularité est l’instruction step.";
+	}
 }

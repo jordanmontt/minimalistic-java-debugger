@@ -26,4 +26,13 @@ public class BreakCommand implements InputCommand {
 		return false;
 	}
 
+	@Override
+	public String commandName() {
+		return "break";
+	}
+
+	@Override
+	public String description() {
+		return "installe un point d’arrêt à la ligne lineNumber du fichier fileName (les paramètres seront demandés après saisir la commande).";
+	}
 }

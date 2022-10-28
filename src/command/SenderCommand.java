@@ -26,4 +26,14 @@ public class SenderCommand implements InputCommand {
     public boolean isResumable() {
         return false;
     }
+
+    @Override
+    public String commandName() {
+        return "sender";
+    }
+
+    @Override
+    public String description() {
+        return "envoie l’objet qui a appelé la méthode courante.";
+    }
 }

@@ -26,4 +26,13 @@ public class BreakBeforeMethodCallCommand implements InputCommand {
 		return false;
 	}
 
+	@Override
+	public String commandName() {
+		return "break-before-method-call";
+	}
+
+	@Override
+	public String description() {
+		return "configure l’exécution pour s’arrêter au tout début de l’exécution de la méthode methodName. (le nom sera demandé après saisir la commande).";
+	}
 }

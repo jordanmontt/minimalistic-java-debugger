@@ -23,4 +23,14 @@ public class MethodCommand implements InputCommand {
     public boolean isResumable() {
         return false;
     }
+
+    @Override
+    public String commandName() {
+        return "method";
+    }
+
+    @Override
+    public String description() {
+        return "envoie et imprime la méthode en cours d’exécution.";
+    }
 }
