@@ -1,4 +1,4 @@
-# Mini Java-Debugger Implementation
+# Mini Java Debugger Implementation
 
 This is a mini-implementation of a Java Debugger using the Java Debugger Interface (JDI). For running the program, you need to execute the main entry point class `JDISimpleDebugger`. You will have the terminal opened and you can enter te following commands:
 
